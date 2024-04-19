@@ -25,7 +25,7 @@ public class Order implements Serializable {
 	private String id;
 	
 	@Column(name = "Order_Date", nullable = false)
-	private Date createDate;
+	private Date orderDate;
 	
 	@Column(name = "Order_Num", nullable = false)
 	private int orderNum;
