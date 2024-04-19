@@ -3,6 +3,7 @@ package com.example.demo.service;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,32 +19,39 @@ import com.example.demo.entity.Account;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-	@Autowired
-	private AccountDAO accountDAO;
+    @Autowired
+    private AccountDAO accountDAO;
 
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Account account = accountDAO.findAccount(username);
-		System.out.println("Account= " + account);
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Account account = accountDAO.findAccount(username);
+        System.out.println("Account= " + account);
 
-		if (account == null) {
-			throw new UsernameNotFoundException("User " + username + " was not found in the db");
-		}
+        if (account == null) {
+            throw new UsernameNotFoundException("User " //
+                    + username + " was not found in the database");
+        }
 
-		String role = account.getUserRole();
-		List<GrantedAuthority> grantList = new ArrayList<GrantedAuthority>();
+        // EMPLOYEE,MANAGER,..
+        String role = account.getUserRole();
 
-		GrantedAuthority authority = new SimpleGrantedAuthority(role);
+        List<GrantedAuthority> grantList = new ArrayList<GrantedAuthority>();
 
-		grantList.add(authority);
-		boolean enabled = account.isActive();
-		boolean accountNonExpired = true;
-		boolean credentialsNonExpired = true;
-		boolean accountNonLocked = true;
+        // ROLE_EMPLOYEE, ROLE_MANAGER
+        GrantedAuthority authority = new SimpleGrantedAuthority(role);
 
-		UserDetails userDetails = (UserDetails)new User(account.getUserName(), //
+        grantList.add(authority);
+
+        boolean enabled = account.isActive();
+        boolean accountNonExpired = true;
+        boolean credentialsNonExpired = true;
+        boolean accountNonLocked = true;
+
+        UserDetails userDetails = (UserDetails) new User(account.getUserName(), //
                 account.getEncrytedPassword(), enabled, accountNonExpired, //
                 credentialsNonExpired, accountNonLocked, grantList);
-		return userDetails;
-	}
+
+        return userDetails;
+    }
+
 }
